@@ -1,0 +1,9 @@
+{
+  "levels":
+  [
+    {
+      "name": "test",
+      "path": "./levels/test.json"
+    }
+  ]
+}

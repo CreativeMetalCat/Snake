@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src = "./../snakebase/base.js"></script>
+    <script src ="editor.js"></script>
+    <style>
+        canvas{
+            border-style: solid;
+        }
+    </style>
+</head>
+<body onload="load()">
+  <div class="levelControlTools">
+    <p>Field size</p><input type="number" min="5"id="levelSize">
+  </div>
+  <div class ="levelControlButtons">
+    <input type="button" value="Resize canvas" onclick="resizeCanvas()">
+  </div>
+  <div>
+      <select id="tool">What to place
+          <option value="apple">Apple</option>
+          <option value="wall">Wall</option>
+          <option value="playerStart">Player Start</option>
+      </select>
+  </div>
+  <canvas id="editField"></canvas>
+</body>
+</html>

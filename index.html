@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="snakebase/base.js"></script>
+    <script src="snake.js"></script>
+    <script src="index.js"></script>
+    <link href="index.css" type="text/css">
+</head>
+<body onload="onPageLoad()">
+    <p id="debugOutput"></p>
+    <div class="navigation">
+        <a href ="editor/editor.html">Editor</a>
+    </div>
+    <div>
+        <input type="button" value="startTheGame" onclick="load()">
+        <div>
+            <p>Select a level to play</p>
+            <select id = "levels">
+            </select>
+        </div>
+    </div>
+    <canvas id="gameCanvas" class="gameField"></canvas>
+</body>
+</html>
