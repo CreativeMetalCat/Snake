@@ -4,6 +4,10 @@
     {
       "name": "test",
       "path": "./levels/test.json"
+    },
+    {
+      "name": "test2",
+      "path": "./levels/test2.json"
     }
   ]
 }

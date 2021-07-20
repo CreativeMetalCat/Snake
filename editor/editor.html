@@ -20,12 +20,17 @@
       <input type="button" value ="GenerateLevelString" onclick="generateLevel()">
       <p>Level name</p>
       <input type="text" id="levelName">
+      <p>Various data</p>
+      <ul>
+          <li>Min apple count <input type="number" value="1" min="0" id="minAppleCount"></li>
+      </ul>
   </div>
   <div>
       <select id="tool">What to place
           <option value="apple">Apple</option>
           <option value="wall">Wall</option>
           <option value="playerStart">Player Start</option>
+          <option value="finishPoint">Finish point</option>
       </select>
   </div>
   <canvas id="editField"></canvas>

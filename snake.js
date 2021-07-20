@@ -33,24 +33,34 @@ function loadLevelLayout(levelPath) {
     req.send(null);
     let levelLayout = JSON.parse(req.responseText);
 
-    if(levelLayout.walls != null) {
+    if (levelLayout.size != null) {
+        levelData.fieldSize = levelLayout.size;
+    }
+    if (levelLayout.walls != null) {
         //first load the walls
         for (let i = 0; i < levelLayout.walls.length; i++) {
             gameObjects.walls[i] = new Wall(new Vector2(levelLayout.walls[i].location.x, levelLayout.walls[i].location.y));
         }
     }
-    if(levelLayout.playerSpawn != null)
-    {
-        gameObjects.snakeHead.location.set(new Vector2(levelLayout.playerSpawn.location.x,levelLayout.playerSpawn.location.y));
+    if (levelLayout.playerSpawn != null) {
+        gameObjects.snakeHead.location.set(new Vector2(levelLayout.playerSpawn.location.x, levelLayout.playerSpawn.location.y));
     }
 
-    if(levelLayout.apples != null) {
+    if (levelLayout.apples != null) {
         for (let i = 0; i < levelLayout.apples.length; i++) {
             if (levelLayout.apples[i] != null) {
                 gameObjects.apples[i] = new Apple(levelLayout.apples[i].location);
             }
         }
     }
+    if(levelLayout.finishPoint != null)
+    {
+        gameObjects.finishPoint = new FinishPoint(levelLayout.finishPoint.location);
+    }
+
+    gameObjects.snakeHead.location.set(levelLayout.playerSpawn.location);
+
+    levelData.minAppleCount = levelLayout.minAppleCount;
 }
 
 function load() {
@@ -59,13 +69,13 @@ function load() {
     Statics.context = Statics.canvas.getContext('2d');
 
     if (Statics.canvas != null) {
-        //level is always a square because it allows to easier covert coords to ids
-        Statics.canvas.width = levelData.fieldSize * Statics.shapeSize;
-        Statics.canvas.height = levelData.fieldSize * Statics.shapeSize;
-
         clearLevelData();
 
         loadLevelLayout(document.getElementById("levels").value);
+
+        //level is always a square because it allows to easier covert coords to ids
+        Statics.canvas.width = levelData.fieldSize * Statics.shapeSize;
+        Statics.canvas.height = levelData.fieldSize * Statics.shapeSize;
 
         gameObjects.snakeHead.type = SnakeBlockType.Head;
 
@@ -149,18 +159,39 @@ function draw() {
         for(let i =0;i<gameObjects.walls.length;i++){
             Drawing.drawWallColor(gameObjects.walls[i]);
         }
+        Drawing.drawFinishPoint(gameObjects.finishPoint);
     }
 }
+function canWin()
+{
+    return levelData.currentAppleCount >= levelData.minAppleCount;
+}
+
+function win()
+{
+    if(canWin())
+    {
+        //show win screen
+        alert("you win!");
+    }
+}
+
 
 function update() {
     if (gameObjects.snake.length > 0 && gameObjects.snake[0].type != SnakeBlockType.Tail) {
         gameObjects.snake[0].type = SnakeBlockType.Tail;
     }
+
     let collectedAmount = 0;
+
     for (let i = 0; i < gameObjects.apples.length; i++) {
         if (gameObjects.apples[i].collected) {
             collectedAmount++;
         }
     }
-    document.getElementById("debugOutput").innerText = collectedAmount.toString();
+    levelData.currentAppleCount = collectedAmount;
+
+    if (gameObjects.snakeHead.location.equal(gameObjects.finishPoint.location)) {
+        win();
+    }
 }

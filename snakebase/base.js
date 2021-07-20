@@ -12,8 +12,7 @@ let levelData = {
 }
 
 //type that represents location
-class
-Vector2 {
+class Vector2 {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -75,9 +74,17 @@ class Wall {
     }
 }
 
+class FinishPoint{
+    constructor(location) {
+        this.location = new Vector2(0, 0);
+        this.location.set(location);
+    }
+}
+
 let gameObjects = {
     //part of the snake controlled by player
     snakeHead: new SnakePart(0, 0),
+    finishPoint : new FinishPoint(0,0),
     //representation of all snake parts
     snake: [],
     //array of all the apples player needs to collect
@@ -118,14 +125,18 @@ let Drawing = {
             Statics.context.fillRect(wall.location.x * Statics.shapeSize, wall.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
-    drawGhostBlock: function(block)
-    {
+    drawGhostBlock: function (block) {
         if (Statics.context != null) {
             Statics.context.fillStyle = 'rgba(35,34,34,0.8)';
             Statics.context.fillRect(block.location.x * Statics.shapeSize, block.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
+    },
+    drawFinishPoint: function (point) {
+        if (Statics.context != null) {
+            Statics.context.fillStyle = 'rgba(16,127,127,0.8)';
+            Statics.context.fillRect(point.location.x * Statics.shapeSize, point.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+        }
     }
-
 }
 
 function clearLevelData()
