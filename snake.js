@@ -124,14 +124,16 @@ function load() {
                     shouldUpdate = false;
                     break;
             }
-            lastPlayerRotation = (dir != -1) ? dir : lastPlayerRotation;
+
             if(moveSuccessful){
                 turnsTaken++;
+                lastPlayerRotation = (dir != -1) ? dir : lastPlayerRotation;
             }
             if (shouldUpdate) {
                 let id = gameObjects.snake.length;
                 //check if player went back to the previous location
                 if (gameObjects.snake.length > 0 && gameObjects.snake[gameObjects.snake.length - 1].location.equal(gameObjects.snakeHead.location)) {
+                    lastPlayerRotation = gameObjects.snake[gameObjects.snake.length - 1].rotation;
                     //remove that part
                     gameObjects.snake.splice(gameObjects.snake.length - 1, 1);
                     for (let i = 0; i < gameObjects.apples.length; i++) {
