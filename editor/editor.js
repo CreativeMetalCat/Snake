@@ -13,6 +13,8 @@ let leftMouseButtonDown = false;
 
 let rightMouseButtonDown = false;
 
+let selectedObject = null;
+
 function convertLocation(x,y) {
     return new Vector2(Math.floor((x - Statics.canvas.getBoundingClientRect().left) / Statics.shapeSize), Math.floor((y - Statics.canvas.getBoundingClientRect().top) / Statics.shapeSize));
 }
@@ -57,6 +59,49 @@ function copyLevelString(){
 
     document.execCommand("copy");
 }
+
+//returns base object with same location. Special objects like spawn and finish points are ignored, because they have no details
+function getObjectByLocation(location) {
+    for (let i = 0; i < gameObjects.walls.length; i++) {
+        if (gameObjects.walls[i].location.equal(location)) {
+            return gameObjects.walls[i];
+        }
+    }
+
+    for (let i = 0; i < gameObjects.apples.length; i++) {
+        if (gameObjects.apples[i].location.equal(location)) {
+            return gameObjects.apples[i];
+        }
+    }
+}
+
+function updateSelectedObjectName() {
+    if (selectedObject != null) {
+        selectedObject.name = document.getElementById("objName").value;
+    }
+}
+
+
+function selectObject(location) {
+    //find the object that has same location
+    let obj = getObjectByLocation(location);
+    if (obj != null) {
+        //update details panel
+        document.getElementById("objName").value = obj.name;
+        selectedObject = obj;
+        if(obj instanceof Wall)
+        {
+            //generate type selection panel
+            let detailDiv = document.getElementById("specialDetails");
+            detailDiv.innerHTML = "<select id=\"wallType\">Wall Type <option value=\"Normal\">Normal Wall</option> <option value=\"Water\">Water</option></select>";
+        }
+        else
+        {
+            document.getElementById("specialDetails").innerHTML = "";
+        }
+    }
+}
+
 
 function placeObject(location) {
     if (canBePlacedHere(location)) {
@@ -114,7 +159,11 @@ function load() {
     Statics.canvas.addEventListener('mousedown', function (e) {
         if (e.button == 0) {
             leftMouseButtonDown = true;
-            placeObject(convertLocation(e.x, e.y));
+            if (canBePlacedHere(convertLocation(e.x, e.y))) {
+                placeObject(convertLocation(e.x, e.y));
+            } else {
+                selectObject(convertLocation(e.x, e.y));
+            }
         }
         if (e.button == 2) {
             rightMouseButtonDown = true;

@@ -1,7 +1,8 @@
 let Statics = {
     canvas : null,
     context :  null,
-    shapeSize : 50
+    shapeSize : 50,
+    snakeAtlasPath: "art/snake_atlas.png"
 }
 
 let levelData = {
@@ -10,6 +11,8 @@ let levelData = {
     totalAppleCount: 0,
     currentAppleCount: 0
 }
+
+let lastPlayerRotation = 0;
 
 //type that represents location
 class Vector2 {
@@ -42,8 +45,8 @@ let SnakeBlockType =
 let Rotation =
     {
         Up:0,
-        Right:1,
-        Down:2,
+        Right:2,
+        Down:1,
         Left:3
     }
 
@@ -55,6 +58,10 @@ class SnakePart {
         this.previousLocation = new Vector2(0, 0);
 
         this.type = SnakeBlockType.Body;
+
+        //image used for drawing
+        this.image = new Image();
+        this.image.src = Statics.snakeAtlasPath;
     }
 }
 
@@ -66,6 +73,10 @@ class Apple {
         this.collected = false;
 
         this.name = "apple";
+
+        //image used for drawing
+        this.image = new Image();
+        this.image.src = Statics.snakeAtlasPath;
     }
 }
 
@@ -81,6 +92,10 @@ class Wall {
         this.name = "wall";
 
         this.type = WallTypes.Wall;
+
+        //image used for drawing
+        this.image = new Image();
+        this.image.src = Statics.snakeAtlasPath;
     }
 }
 
@@ -88,6 +103,10 @@ class FinishPoint{
     constructor(location) {
         this.location = new Vector2(0, 0);
         this.location.set(location);
+
+        //image used for drawing
+        this.image = new Image();
+        this.image.src = Statics.snakeAtlasPath;
     }
 }
 
@@ -123,6 +142,25 @@ let Drawing = {
             Statics.context.fillRect(part.location.x * Statics.shapeSize, part.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
+    drawSnakePart:function (part)
+    {
+        //default uv uses head
+        let uv = new Vector2(0,0);
+        if (Statics.context != null) {
+            switch (part.type) {
+                case SnakeBlockType.Body:
+                    uv.y = 48;
+                    break;
+                case SnakeBlockType.Head:
+                    uv.x = 16*lastPlayerRotation;
+                    break;
+                case SnakeBlockType.Tail:
+                    uv = new Vector2(0,16);
+                    break;
+            }
+        }
+        Statics.context.drawImage(part.image,uv.x,uv.y,16,16,part.location.x * Statics.shapeSize,part.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+    },
     drawAppleColor: function (apple) {
         if (Statics.context != null) {
             Statics.context.fillStyle = apple.collected ? 'black' : 'yellow';
@@ -131,7 +169,7 @@ let Drawing = {
     },
     drawWallColor: function (wall) {
         if (Statics.context != null) {
-            Statics.context.fillStyle = wall.type == WallTypes.Wall? 'black' : 'blue';
+            Statics.context.fillStyle = wall.type == WallTypes.Wall ? 'black' : 'blue';
             Statics.context.fillRect(wall.location.x * Statics.shapeSize, wall.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
@@ -145,6 +183,22 @@ let Drawing = {
         if (Statics.context != null) {
             Statics.context.fillStyle = 'rgba(16,127,127,0.8)';
             Statics.context.fillRect(point.location.x * Statics.shapeSize, point.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+        }
+    },
+    drawWall: function (wall) {
+        if (Statics.context != null) {
+            let resultUV = new Vector2(48, 112);
+            if (gameObjects.walls.length > 1) {
+                let id = wall.location.x + wall.location.y * levelData.fieldSize;
+                if (gameObjects.walls[id - 1] != null && gameObjects.walls[id + 1] != null) {
+                    resultUV.set(new Vector2(16, 112));
+                } else if (gameObjects.walls[id - 1] != null) {
+                    resultUV.set(new Vector2(32, 112));
+                } else if (gameObjects.walls[id + 1] != null) {
+                    resultUV.set(new Vector2(0, 112));
+                }
+            }
+            Statics.context.drawImage(wall.image, resultUV.x, resultUV.y, 16, 16, wall.location.x * Statics.shapeSize, wall.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     }
 }

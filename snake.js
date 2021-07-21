@@ -76,6 +76,8 @@ function load() {
     Statics.canvas = document.getElementById("gameCanvas");
     Statics.context = Statics.canvas.getContext('2d');
 
+
+
     if (Statics.canvas != null) {
         clearLevelData();
 
@@ -91,6 +93,10 @@ function load() {
         Statics.canvas.height = levelData.fieldSize * Statics.shapeSize;
 
         gameObjects.snakeHead.type = SnakeBlockType.Head;
+
+        Statics.context.webkitImageSmoothingEnabled = false;
+        Statics.context.msImageSmoothingEnabled = false;
+        Statics.context.imageSmoothingEnabled = false;
 
         //add input function
         window.addEventListener('keydown', function (e) {
@@ -118,6 +124,7 @@ function load() {
                     shouldUpdate = false;
                     break;
             }
+            lastPlayerRotation = (dir != -1) ? dir : lastPlayerRotation;
             if(moveSuccessful){
                 turnsTaken++;
             }
@@ -160,7 +167,7 @@ function draw() {
         Statics.context.fillRect(0, 0, Statics.shapeSize * levelData.fieldSize, Statics.shapeSize * levelData.fieldSize);
 
         //draw the head of the snake
-        Drawing.drawSnakePartColor(gameObjects.snakeHead);
+        Drawing.drawSnakePart(gameObjects.snakeHead);
 
         //the draw snake
         for (let i = 0; i < gameObjects.snake.length; i++) {
@@ -173,7 +180,7 @@ function draw() {
             Drawing.drawAppleColor(gameObjects.apples[i]);
         }
         for(let i =0;i<gameObjects.walls.length;i++){
-            Drawing.drawWallColor(gameObjects.walls[i]);
+            Drawing.drawWall(gameObjects.walls[i]);
         }
         Drawing.drawFinishPoint(gameObjects.finishPoint);
     }
