@@ -220,6 +220,10 @@ let Drawing = {
             Statics.context.fillRect(Statics.shapeSize * 0.25 + Statics.shapeSize * apple.location.x, Statics.shapeSize * 0.25 + Statics.shapeSize * apple.location.y, Statics.shapeSize * 0.75, Statics.shapeSize * 0.75);
         }
     },
+    drawApple: function (apple) {
+        if (Statics.context != null) {
+            Statics.context.drawImage(apple.image, 0,160, 16, 16, apple.location.x * Statics.shapeSize,apple.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize); }
+    },
     drawWallColor: function (wall) {
         if (Statics.context != null) {
             Statics.context.fillStyle = wall.type == WallTypes.Wall ? 'black' : 'blue';

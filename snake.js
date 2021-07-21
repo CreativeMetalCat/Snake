@@ -179,7 +179,7 @@ function draw() {
         }
 
         for (let i = 0; i < gameObjects.apples.length; i++) {
-            Drawing.drawAppleColor(gameObjects.apples[i]);
+            Drawing.drawApple(gameObjects.apples[i]);
         }
         for(let i =0;i<gameObjects.walls.length;i++){
             Drawing.drawWall(gameObjects.walls[i]);
