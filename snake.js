@@ -1,3 +1,6 @@
+//how long did it take player to complete the level
+let turnsTaken = 0;
+
 let Player = {
     canMoveToTheLocation: function (location) {
         if (gameObjects.snake.length > 1) {
@@ -27,12 +30,9 @@ let Player = {
     }
 };
 
-function loadLevelLayout(levelPath) {
-    let req = new XMLHttpRequest();
-    req.open("GET", levelPath, false);
-    req.send(null);
-    let levelLayout = JSON.parse(req.responseText);
-
+function loadLevelLayout(levelString)
+{
+    let levelLayout = JSON.parse(levelString);
     if (levelLayout.size != null) {
         levelData.fieldSize = levelLayout.size;
     }
@@ -53,14 +53,22 @@ function loadLevelLayout(levelPath) {
             }
         }
     }
-    if(levelLayout.finishPoint != null)
+    if(levelLayout.finish != null)
     {
-        gameObjects.finishPoint = new FinishPoint(levelLayout.finishPoint.location);
+        gameObjects.finishPoint = new FinishPoint(levelLayout.finish.location);
     }
 
     gameObjects.snakeHead.location.set(levelLayout.playerSpawn.location);
 
     levelData.minAppleCount = levelLayout.minAppleCount;
+}
+
+function loadLevelLayoutFromFile(levelPath) {
+    let req = new XMLHttpRequest();
+    req.open("GET", levelPath, false);
+    req.send(null);
+
+    loadLevelLayout(req.responseText);
 }
 
 function load() {
@@ -71,7 +79,12 @@ function load() {
     if (Statics.canvas != null) {
         clearLevelData();
 
-        loadLevelLayout(document.getElementById("levels").value);
+        if(document.getElementById("levels").value == "levelString"){
+            loadLevelLayout(document.getElementById("levelStringField").value);
+        } else {
+            loadLevelLayoutFromFile(document.getElementById("levels").value);
+        }
+
 
         //level is always a square because it allows to easier covert coords to ids
         Statics.canvas.width = levelData.fieldSize * Statics.shapeSize;
@@ -104,6 +117,9 @@ function load() {
                 default:
                     shouldUpdate = false;
                     break;
+            }
+            if(moveSuccessful){
+                turnsTaken++;
             }
             if (shouldUpdate) {
                 let id = gameObjects.snake.length;

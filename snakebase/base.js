@@ -64,13 +64,23 @@ class Apple {
         this.location.set(location);
 
         this.collected = false;
+
+        this.name = "apple";
     }
+}
+
+let WallTypes={
+    Wall : 0,
+    Water : 1
 }
 
 class Wall {
     constructor(location) {
         this.location = new Vector2(0, 0);
         this.location.set(location);
+        this.name = "wall";
+
+        this.type = WallTypes.Wall;
     }
 }
 
@@ -121,7 +131,7 @@ let Drawing = {
     },
     drawWallColor: function (wall) {
         if (Statics.context != null) {
-            Statics.context.fillStyle = 'black';
+            Statics.context.fillStyle = wall.type == WallTypes.Wall? 'black' : 'blue';
             Statics.context.fillRect(wall.location.x * Statics.shapeSize, wall.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
