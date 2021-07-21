@@ -51,7 +51,7 @@ let Rotation =
     }
 
 class SnakePart {
-    constructor(location) {
+    constructor(location, rotation = -1) {
         this.location = new Vector2(0, 0);
         this.location.set(location);
 
@@ -62,6 +62,8 @@ class SnakePart {
         //image used for drawing
         this.image = new Image();
         this.image.src = Statics.snakeAtlasPath;
+
+        this.rotation = rotation;
     }
 }
 
@@ -142,24 +144,75 @@ let Drawing = {
             Statics.context.fillRect(part.location.x * Statics.shapeSize, part.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
-    drawSnakePart:function (part)
-    {
+    drawSnakePart:function (part,id = -1) {
         //default uv uses head
-        let uv = new Vector2(0,0);
+        let uv = new Vector2(0, 0);
         if (Statics.context != null) {
             switch (part.type) {
                 case SnakeBlockType.Body:
-                    uv.y = 48;
+
+                    if (part.rotation >= 0) {
+                        if (gameObjects.snake[id - 1].rotation == Rotation.Up || gameObjects.snake[id - 1].rotation == Rotation.Down) {
+                            if (part.rotation == Rotation.Up || part.rotation == Rotation.Down) {
+                                uv.x = 0;
+                                uv.y = 48;
+                            }
+                            if (part.rotation == Rotation.Right && gameObjects.snake[id - 1].rotation == Rotation.Up) {
+                                uv.x = 0;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Left && gameObjects.snake[id - 1].rotation == Rotation.Up) {
+                                uv.x = 16;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Right && gameObjects.snake[id - 1].rotation == Rotation.Down) {
+                                uv.x = 32;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Left && gameObjects.snake[id - 1].rotation == Rotation.Down) {
+                                uv.x = 48;
+                                uv.y = 32;
+                            }
+                        } else if (gameObjects.snake[id - 1].rotation == Rotation.Left || gameObjects.snake[id - 1].rotation == Rotation.Right) {
+                            if (part.rotation == Rotation.Left || part.rotation == Rotation.Right) {
+                                uv.x = 16;
+                                uv.y = 48;
+                            }
+                            if (part.rotation == Rotation.Up && gameObjects.snake[id - 1].rotation == Rotation.Right) {
+                                uv.x = 48;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Up && gameObjects.snake[id - 1].rotation == Rotation.Left) {
+                                uv.x = 32;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Down && gameObjects.snake[id - 1].rotation == Rotation.Right) {
+                                uv.x = 16;
+                                uv.y = 32;
+                            }
+                            if (part.rotation == Rotation.Down && gameObjects.snake[id - 1].rotation == Rotation.Left) {
+                                uv.x = 0;
+                                uv.y = 32;
+                            }
+                        }
+                    }
+
                     break;
                 case SnakeBlockType.Head:
-                    uv.x = 16*lastPlayerRotation;
+                    uv.x = 16 * lastPlayerRotation;
                     break;
                 case SnakeBlockType.Tail:
-                    uv = new Vector2(0,16);
+                    let checkObj = gameObjects.snake[1] == null ? gameObjects.snakeHead : gameObjects.snake[1];
+                    if (checkObj.location.x != part.location.x) {
+                        uv.x = (checkObj.location.x - part.location.x) < 0 ? 48 : 32;
+                    } else if (checkObj.location.y != part.location.y) {
+                        uv.x = (checkObj.location.y - part.location.y) < 0 ? 0 : 16;
+                    }
+                    uv.y = 16;
                     break;
             }
         }
-        Statics.context.drawImage(part.image,uv.x,uv.y,16,16,part.location.x * Statics.shapeSize,part.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+        Statics.context.drawImage(part.image, uv.x, uv.y, 16, 16, part.location.x * Statics.shapeSize, part.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
     },
     drawAppleColor: function (apple) {
         if (Statics.context != null) {

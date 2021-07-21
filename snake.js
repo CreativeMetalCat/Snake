@@ -141,7 +141,7 @@ function load() {
                         }
                     }
                 } else if (moveSuccessful) {
-                    gameObjects.snake[id] = new SnakePart(gameObjects.snakeHead.previousLocation);
+                    gameObjects.snake[id] = new SnakePart(gameObjects.snakeHead.previousLocation,lastPlayerRotation);
                     for (let i = 0; i < gameObjects.apples.length; i++) {
                         if (gameObjects.snakeHead.location.equal(gameObjects.apples[i].location)) {
                             gameObjects.apples[i].collected = true;
@@ -172,7 +172,7 @@ function draw() {
         //the draw snake
         for (let i = 0; i < gameObjects.snake.length; i++) {
             if (gameObjects.snake[i] != null) {
-                Drawing.drawSnakePartColor(gameObjects.snake[i]);
+                Drawing.drawSnakePart(gameObjects.snake[i],i);
             }
         }
 
