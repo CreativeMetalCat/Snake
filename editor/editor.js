@@ -9,6 +9,10 @@ let spawnPointLocation = new Vector2(0,0)
 
 let finishPointLocation = new Vector2(0,1);
 
+let leftMouseButtonDown = false;
+
+let rightMouseButtonDown = false;
+
 function convertLocation(x,y) {
     return new Vector2(Math.floor((x - Statics.canvas.getBoundingClientRect().left) / Statics.shapeSize), Math.floor((y - Statics.canvas.getBoundingClientRect().top) / Statics.shapeSize));
 }
@@ -43,8 +47,54 @@ function generateLevel() {
         }
     };
 
-    document.getElementById("levelOutput").innerText = JSON.stringify(result);
+    document.getElementById("levelOutput").value = JSON.stringify(result);
 }
+
+function copyLevelString(){
+    let copyText = document.getElementById("levelOutput");
+
+    copyText.select();
+
+    document.execCommand("copy");
+}
+
+function placeObject(location) {
+    if (canBePlacedHere(location)) {
+        switch (document.getElementById("tool").value) {
+            case "wall":
+                gameObjects.walls[gameObjects.walls.length] = new Wall(location);
+                break
+            case "apple":
+                gameObjects.apples[gameObjects.apples.length] = new Apple(location);
+                break;
+            case "playerStart":
+                spawnPointLocation.set(location);
+                break;
+            case "finishPoint":
+                finishPointLocation.set(location)
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+function removeObject(location) {
+    for (let i = 0; i < gameObjects.walls.length; i++) {
+        if (gameObjects.walls[i].location.equal(location)) {
+            gameObjects.walls.splice(i, 1);
+            return;
+        }
+    }
+
+    for (let i = 0; i < gameObjects.apples.length; i++) {
+        if (gameObjects.apples[i].location.equal(location)) {
+            gameObjects.apples.splice(i, 1);
+            return;
+        }
+    }
+}
+
 
 function load() {
     clearLevelData();
@@ -62,53 +112,38 @@ function load() {
     fieldSize = document.getElementById("levelSize").value;
 
     Statics.canvas.addEventListener('mousedown', function (e) {
-        if(canBePlacedHere(convertLocation(e.x, e.y))) {
-            switch (document.getElementById("tool").value) {
-                case "wall":
-                    gameObjects.walls[gameObjects.walls.length] = new Wall(convertLocation(e.x, e.y));
-                    break
-                case "apple":
-                    gameObjects.apples[gameObjects.apples.length] = new Apple(convertLocation(e.x, e.y));
-                    break;
-                case "playerStart":
-                    spawnPointLocation.set(convertLocation(e.x, e.y));
-                    break;
-                case "finishPoint":
-                    finishPointLocation.set(convertLocation(e.x, e.y))
-                    break;
-                default:
-                    break;
-            }
+        if (e.button == 0) {
+            leftMouseButtonDown = true;
+            placeObject(convertLocation(e.x, e.y));
         }
+        if (e.button == 2) {
+            rightMouseButtonDown = true;
+        }
+    });
+
+    Statics.canvas.addEventListener('mouseup', function (e) {
+        leftMouseButtonDown = false;
+        rightMouseButtonDown = false;
     });
 
     Statics.canvas.addEventListener('mousemove', function (e) {
-        ghostBlock.location.set(convertLocation(e.x, e.y));
+        if (!leftMouseButtonDown) {
+            ghostBlock.location.set(convertLocation(e.x, e.y));
+        }
+        if (rightMouseButtonDown) {
+            removeObject(convertLocation(e.x, e.y));
+        } else if(leftMouseButtonDown){
+            placeObject(convertLocation(e.x, e.y));
+        }
         draw();
     });
 
-    window.addEventListener('contextmenu',function (e){});
+    window.addEventListener('contextmenu', function (e) {
+    });
 
-    Statics.canvas.addEventListener('contextmenu',function (e)
-    {
+    Statics.canvas.addEventListener('contextmenu', function (e) {
         e.preventDefault();
-        for(let i =0;i<gameObjects.walls.length;i++)
-        {
-            if(gameObjects.walls[i].location.equal(convertLocation(e.x,e.y)))
-            {
-                gameObjects.walls.splice(i,1);
-                return;
-            }
-        }
-
-        for(let i =0;i<gameObjects.apples.length;i++)
-        {
-            if(gameObjects.apples[i].location.equal(convertLocation(e.x,e.y)))
-            {
-                gameObjects.apples.splice(i,1);
-                return;
-            }
-        }
+        removeObject(convertLocation(e.x, e.y));
     });
 }
 
