@@ -272,6 +272,11 @@ let Drawing = {
             Statics.context.fillRect(point.location.x * Statics.shapeSize, point.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
+    drawFinish:function(finish){
+        if (Statics.context != null) {
+            Statics.context.drawImage(finish.image,16,160, 16, 16,finish.location.x * Statics.shapeSize, finish.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+        }
+    },
     drawDecor:function(decor){
         if (Statics.context != null) {
             Statics.context.drawImage(decor.image,(decor.type > 3 ? decor.type -  4 : decor.type)*16,decor.type > 3 ? 80 : 64, 16, 16, decor.location.x * Statics.shapeSize, decor.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);

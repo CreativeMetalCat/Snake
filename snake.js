@@ -192,7 +192,7 @@ function draw() {
         for(let i =0;i<gameObjects.walls.length;i++){
             Drawing.drawWall(gameObjects.walls[i]);
         }
-        Drawing.drawFinishPoint(gameObjects.finishPoint);
+        Drawing.drawFinish(gameObjects.finishPoint);
     }
 }
 function canWin()
