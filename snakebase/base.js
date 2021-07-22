@@ -305,4 +305,6 @@ function clearLevelData()
     gameObjects.apples = [];
     gameObjects.snake = [];
     gameObjects.decor = [];
+
+    gameObjects.snakeHead = null;
 }
