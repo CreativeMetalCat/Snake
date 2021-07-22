@@ -1,13 +1,30 @@
 {
   "levels":
   [
+
     {
-      "name": "test",
-      "path": "./levels/test.json"
+      "name": "Start",
+      "path": "./levels/level_start.json"
     },
     {
-      "name": "test2",
-      "path": "./levels/test2.json"
-    }
+          "name": "Start 2",
+          "path": "./levels/level_start_2.json"
+       },
+       {
+                  "name": "Start 3",
+                  "path": "./levels/level_start_3.json"
+                },
+                 {
+                                  "name": "Various 1",
+                                  "path": "./levels/level_various_1.json"
+                                },
+                                 {
+                                                                  "name": "Various 2",
+                                                                  "path": "./levels/level_various_2.json"
+                                                                },
+     {
+          "name": "Face",
+          "path": "./levels/face.json"
+        }
   ]
 }
