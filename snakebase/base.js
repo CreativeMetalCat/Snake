@@ -82,6 +82,18 @@ class Apple {
     }
 }
 
+class Decor{
+    constructor(location,type = 0) {
+        this.type = type;
+        this.location = new Vector2(0,0);
+        this.location.set(location);
+
+        //image used for drawing
+        this.image = new Image();
+        this.image.src = Statics.snakeAtlasPath;
+    }
+}
+
 let WallTypes={
     Wall : 0,
     Water : 1
@@ -112,6 +124,22 @@ class FinishPoint{
     }
 }
 
+//returns base object with same location. Special objects like spawn and finish points are ignored, because they have no details
+function getObjectByLocation(location) {
+    for (let i = 0; i < gameObjects.walls.length; i++) {
+        if (gameObjects.walls[i].location.equal(location)) {
+            return gameObjects.walls[i];
+        }
+    }
+
+    for (let i = 0; i < gameObjects.apples.length; i++) {
+        if (gameObjects.apples[i].location.equal(location)) {
+            return gameObjects.apples[i];
+        }
+    }
+}
+
+
 let gameObjects = {
     //part of the snake controlled by player
     snakeHead: new SnakePart(0, 0),
@@ -122,7 +150,9 @@ let gameObjects = {
     apples: [],
     //walls are just a simple way of creating an obstacle
     //player can not pass through the obstacle
-    walls:[]
+    walls:[],
+    //various decor items like flowers
+    decor:[]
 }
 
 //object that is responsible for drawing objects on screen
@@ -242,16 +272,24 @@ let Drawing = {
             Statics.context.fillRect(point.location.x * Statics.shapeSize, point.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
         }
     },
+    drawDecor:function(decor){
+        if (Statics.context != null) {
+            Statics.context.drawImage(decor.image,(decor.type > 3 ? decor.type -  4 : decor.type)*16,decor.type > 3 ? 80 : 64, 16, 16, decor.location.x * Statics.shapeSize, decor.location.y * Statics.shapeSize, Statics.shapeSize, Statics.shapeSize);
+        }
+    }
+    ,
     drawWall: function (wall) {
         if (Statics.context != null) {
             let resultUV = new Vector2(48, 112);
+            let leftObj = getObjectByLocation(new Vector2(wall.location.x - 1,wall.location.y));
+            let rightObj = getObjectByLocation(new Vector2(wall.location.x + 1,wall.location.y));
             if (gameObjects.walls.length > 1) {
-                let id = wall.location.x + wall.location.y * levelData.fieldSize;
-                if (gameObjects.walls[id - 1] != null && gameObjects.walls[id + 1] != null) {
+                let id =  + wall.location.y * levelData.fieldSize;
+                if (leftObj != null && rightObj  != null) {
                     resultUV.set(new Vector2(16, 112));
-                } else if (gameObjects.walls[id - 1] != null) {
+                } else if (leftObj != null) {
                     resultUV.set(new Vector2(32, 112));
-                } else if (gameObjects.walls[id + 1] != null) {
+                } else if (rightObj  != null) {
                     resultUV.set(new Vector2(0, 112));
                 }
             }
@@ -266,4 +304,5 @@ function clearLevelData()
     gameObjects.walls = [];
     gameObjects.apples = [];
     gameObjects.snake = [];
+    gameObjects.decor = [];
 }

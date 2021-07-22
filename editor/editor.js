@@ -1,4 +1,5 @@
 
+Statics.snakeAtlasPath = "../" + Statics.snakeAtlasPath;
 let ghostBlock = {
     location:new Vector2(0,0)
 }
@@ -43,6 +44,7 @@ function generateLevel() {
             location: spawnPointLocation
         },
         walls: gameObjects.walls,
+        decor:gameObjects.decor,
         apples: gameObjects.apples,
         finish: {
             location: finishPointLocation
@@ -52,27 +54,12 @@ function generateLevel() {
     document.getElementById("levelOutput").value = JSON.stringify(result);
 }
 
-function copyLevelString(){
+function copyLevelString() {
     let copyText = document.getElementById("levelOutput");
 
     copyText.select();
 
     document.execCommand("copy");
-}
-
-//returns base object with same location. Special objects like spawn and finish points are ignored, because they have no details
-function getObjectByLocation(location) {
-    for (let i = 0; i < gameObjects.walls.length; i++) {
-        if (gameObjects.walls[i].location.equal(location)) {
-            return gameObjects.walls[i];
-        }
-    }
-
-    for (let i = 0; i < gameObjects.apples.length; i++) {
-        if (gameObjects.apples[i].location.equal(location)) {
-            return gameObjects.apples[i];
-        }
-    }
 }
 
 function updateSelectedObjectName() {
@@ -102,6 +89,17 @@ function selectObject(location) {
     }
 }
 
+//places decor items
+function generateDecor() {
+    gameObjects.decor = [];
+    for (let x = 0; x < fieldSize; x++) {
+        for (let y = 0; y < fieldSize; y++) {
+            if(canBePlacedHere(new Vector2(x,y)) && Math.random() < 0.5){
+                gameObjects.decor[gameObjects.decor.length] = new Decor(new Vector2(x,y),Math.floor(Math.random()*70));
+            }
+        }
+    }
+}
 
 function placeObject(location) {
     if (canBePlacedHere(location)) {
@@ -199,13 +197,18 @@ function load() {
 function draw() {
     Statics.context.fillStyle = "rgb(29,83,29)"
     Statics.context.fillRect(0, 0, Statics.canvas.width, Statics.canvas.height);
+
+    for(let i =0;i<gameObjects.decor.length;i++){
+        Drawing.drawDecor(gameObjects.decor[i]);
+    }
+
     Drawing.drawGhostBlock(ghostBlock);
 
     for (let i = 0; i < gameObjects.apples.length; i++) {
-        Drawing.drawAppleColor(gameObjects.apples[i]);
+        Drawing.drawApple(gameObjects.apples[i]);
     }
     for (let i = 0; i < gameObjects.walls.length; i++) {
-        Drawing.drawWallColor(gameObjects.walls[i]);
+        Drawing.drawWall(gameObjects.walls[i]);
     }
 
     Statics.context.fillStyle = 'rgb(0,46,255)';
@@ -220,4 +223,8 @@ function resizeCanvas()
 {
     Statics.canvas.width = Statics.shapeSize *  fieldSize;
     Statics.canvas.height = Statics.shapeSize *  fieldSize;
+
+    Statics.context.webkitImageSmoothingEnabled = false;
+    Statics.context.msImageSmoothingEnabled = false;
+    Statics.context.imageSmoothingEnabled = false;
 }

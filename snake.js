@@ -42,6 +42,11 @@ function loadLevelLayout(levelString)
             gameObjects.walls[i] = new Wall(new Vector2(levelLayout.walls[i].location.x, levelLayout.walls[i].location.y));
         }
     }
+    if(levelLayout.decor != null){
+        for(let i =0;i<levelLayout.decor.length;i++) {
+            gameObjects.decor[i] = new Decor(levelLayout.decor[i].location,levelLayout.decor[i].type);
+        }
+    }
     if (levelLayout.playerSpawn != null) {
         gameObjects.snakeHead.location.set(new Vector2(levelLayout.playerSpawn.location.x, levelLayout.playerSpawn.location.y));
     }
@@ -168,6 +173,9 @@ function draw() {
         Statics.context.fillStyle = "rgb(29,83,29)"
         Statics.context.fillRect(0, 0, Statics.shapeSize * levelData.fieldSize, Statics.shapeSize * levelData.fieldSize);
 
+        for(let i =0;i<gameObjects.decor.length;i++){
+            Drawing.drawDecor(gameObjects.decor[i]);
+        }
         //draw the head of the snake
         Drawing.drawSnakePart(gameObjects.snakeHead);
 
@@ -196,8 +204,8 @@ function win()
 {
     if(canWin())
     {
-        //show win screen
-        alert("you win!");
+        document.getElementById("endScreen").style.display = "block";
+        document.getElementById("stepCount").innerText = turnsTaken.toString();
     }
 }
 

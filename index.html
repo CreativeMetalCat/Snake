@@ -14,6 +14,15 @@
         <a href ="editor/editor.html">Editor</a>
     </div>
     <div>
+        <div class="endScreen" id="endScreen" style="display: none">
+            <h3>Level completed</h3>
+            <ul>Stats
+                <li>
+                    You took <span id="stepCount">-1</span> steps
+                </li>
+            </ul>
+            <input type="button" value="Ok">
+        </div>
         <p>Level string</p>
         <input type="text" id="levelStringField">
         <input type="button" value="startTheGame" onclick="load()">
